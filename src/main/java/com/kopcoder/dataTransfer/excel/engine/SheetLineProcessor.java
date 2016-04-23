@@ -83,6 +83,7 @@ public class SheetLineProcessor<T extends LineData> {
     while((defCell = defRow.getCell(cellIdx)) != null) {
       String defCellName = defCell.getStringCellValue();
 
+
       if(defCellName != null) {
         // 去掉列头定义中的*值
         defCellName = defCellName.trim().replaceAll("\\*", "");

@@ -66,11 +66,13 @@ public class SheetProcessor<T extends LineData> {
    * @return SheetProcessResult
    */
   public SheetProcessResult process(InputStream inStream, int startLineNum, boolean singleFlush) {
+    System.out.println("prepare process sheet " + sheetName);
     Sheet sheet = getSheet(inStream);
     if(sheet == null) {
       return null;
     }
 
+    logger.info("prepare process sheet " + sheetName);
     return processLine(sheet, startLineNum, singleFlush);
   }
 
@@ -89,7 +91,7 @@ public class SheetProcessor<T extends LineData> {
     }
 
     while(lineResult != null) {
-      lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush, newModel());
+      lineResult = lineProcessor.processLineData(sheet, ++lineNum, singleFlush, newModel());
 
       if(lineResult != null) {
         sheetResult.add(lineResult);

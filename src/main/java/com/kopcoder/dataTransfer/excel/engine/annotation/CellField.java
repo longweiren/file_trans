@@ -9,6 +9,9 @@ import java.lang.annotation.Target;
 /**
  * 单元格对应领域对象属性注解
  */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface CellField {
   public abstract boolean required() default false;
   public abstract String cellName() default "";
