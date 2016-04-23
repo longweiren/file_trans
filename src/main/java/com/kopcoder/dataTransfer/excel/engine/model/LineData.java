@@ -76,13 +76,11 @@ public abstract class LineData {
    * @Description 把单元格数据设置到领域对象对应的字段上
    */
   public final void setCellValue(String cellName, String value) {
-    System.out.println(cellName + value);
     if(cellName == null || value == null) {
       return;
     }
 
     Field targetField = getMappedField(cellName);
-    System.out.println(targetField);
 
     setFieldValue(targetField, value);
   }
