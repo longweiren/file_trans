@@ -33,7 +33,7 @@ public abstract class LineData {
    * @Description: json对象转lineData对象
    * @return
    */
-  public abstract LineData wrapperWith(JSONObject jsonObj);
+  // public abstract LineData wrapperWith(JSONObject jsonObj);
 
   /**
    * 根据单元格名称查找领域对象对应的field

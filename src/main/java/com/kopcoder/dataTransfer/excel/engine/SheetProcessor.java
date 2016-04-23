@@ -19,15 +19,15 @@ import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 
-public abstract class SheetProcessor<T extends LineData, V extends LineDataValidator<T>, H extends LineDataHandler<T>> {
+public class SheetProcessor<T extends LineData> {
 
   private Logger logger = LogManager.getLogger(getClass());
 
   private String sheetName;
   private Class<T>  targetClazz;
-  private SheetLineProcessor<T, V, H> lineProcessor;
+  private SheetLineProcessor<T> lineProcessor;
 
-  public SheetProcessor(String sheetName, Class<T> targetClazz, SheetLineProcessor<T, V, H> lineProcessor) {
+  public SheetProcessor(String sheetName, Class<T> targetClazz, SheetLineProcessor<T> lineProcessor) {
     super();
     this.sheetName = sheetName;
     this.targetClazz = targetClazz;

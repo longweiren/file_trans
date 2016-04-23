@@ -15,14 +15,14 @@ import com.kopcoder.dataTransfer.excel.engine.handler.LineDataHandler;
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
-public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<T>, H extends LineDataHandler<T>> {
+public class SheetLineProcessor<T extends LineData> {
 
   private Logger logger = LogManager.getLogger(getClass());
 
-  private V validator = null;
-  private H lineDataHandler = null;
+  private LineDataValidator<T>  validator = null;
+  private LineDataHandler<T> lineDataHandler = null;
 
-  public SheetLineProcessor(V validator, H dataHandler) {
+  public SheetLineProcessor(LineDataValidator<T> validator, LineDataHandler<T> dataHandler) {
     super();
     this.validator = validator;
     this.lineDataHandler = dataHandler;
