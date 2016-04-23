@@ -23,4 +23,8 @@ public class LineProcessResult {
   public LineData getLineData() {
     return lineData;
   }
+
+  public boolean isSuccess() {
+    return success;
+  }
 }

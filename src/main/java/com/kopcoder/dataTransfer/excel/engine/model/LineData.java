@@ -6,17 +6,22 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+
+import com.kopcoder.dataTransfer.excel.engine.annotation.CellField;
+import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
 /**
  * @Description: 数据行记录
  * @author: kopcoder
  */
-public abstract LineData {
+public abstract class LineData {
 
-  private Logger logger = Logger.getLogger(getClass());
+  private Logger logger = LogManager.getLogger(getClass());
 
   /**
    * @Description: 获取lineData数据记录的标识(缓存数据时作为键值)
@@ -28,7 +33,7 @@ public abstract LineData {
    * @Description: json对象转lineData对象
    * @return
    */
-  public abatract LineData wrapperWith(JSONObject jsonObj);
+  public abstract LineData wrapperWith(JSONObject jsonObj);
 
   /**
    * 根据单元格名称查找领域对象对应的field
@@ -37,12 +42,12 @@ public abstract LineData {
 
     Field[] fields = getClass().getDeclaredFields();
 
-    if(fields) {
+    if(fields != null) {
       for (Field field : fields) {
         CellField cellDef = field.getAnnotation(CellField.class);
 
         if( cellDef != null) {
-          if( StirngUtils.isNotBlank(cellDef.cellName())
+          if( StringUtils.isNotBlank(cellDef.cellName())
             && cellDef.cellName().equals(cellName)) {
             return field;
           }
@@ -56,9 +61,15 @@ public abstract LineData {
   private Method getStringSetter(Field field) {
     String fieldName = field.getName();
     String setterName = "set" + Character.toUpperCase(fieldName.charAt(0))
-      + fieldName.subString(1);
+      + fieldName.substring(1);
 
-    return getClass().getMethod(setterName, String.class);
+    try {
+      return getClass().getMethod(setterName, String.class);
+    } catch (NoSuchMethodException e) {
+      logger.error("获取setter方法异常：" + e.getMessage());
+      return null;
+    }
+
   }
 
   /**
@@ -71,7 +82,7 @@ public abstract LineData {
 
     Field targetField = getMappedField(cellName);
 
-    setFieldValue(field, value);
+    setFieldValue(targetField, value);
   }
 
   /**
@@ -102,13 +113,11 @@ public abstract LineData {
         setMethod.invoke(this, value);
       } catch (SecurityException e) {
         logger.error("setter invoke error:" + e.getMessage());
-      } catch (NoSuchMethodException e) {
-        logger.error("setter invoke error:" + e.getMessage());
       } catch ( IllegalArgumentException e) {
         logger.error("setter invoke error:" + e.getMessage());
       } catch (IllegalAccessException e) {
         logger.error("setter invoke error:" + e.getMessage());
-      } cath (InvocationTargetException e) {
+      } catch (InvocationTargetException e) {
         logger.error("setter invoke error:" + e.getMessage());
       }
     }
@@ -119,6 +128,6 @@ public abstract LineData {
   }
 
   public LineProcessResult failedResult(String msg) {
-    return new LineProcessFailedResult(this, msg);
+    return new LineProcessFailResult(this, msg);
   }
 }

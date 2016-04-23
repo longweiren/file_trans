@@ -3,20 +3,34 @@ package com.kopcoder.dataTransfer.excel.engine;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WookbookFactory;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-public abstract class SheetProcessor<T extends LineData, V extends LineDataValidator<T>> {
+import com.kopcoder.dataTransfer.excel.engine.validator.LineDataValidator;
+import com.kopcoder.dataTransfer.excel.engine.handler.LineDataHandler;
+import com.kopcoder.dataTransfer.excel.engine.model.SheetProcessResult;
+import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
+
+import com.kopcoder.dataTransfer.excel.engine.model.LineData;
+
+public abstract class SheetProcessor<T extends LineData, V extends LineDataValidator<T>, H extends LineDataHandler<T>> {
+
+  private Logger logger = LogManager.getLogger(getClass());
 
   private String sheetName;
-  private SheetLineProcessor<T, V> lineProcessor
+  private Class<T>  targetClazz;
+  private SheetLineProcessor<T, V, H> lineProcessor;
 
-  public ExcelSheetProcess(String sheetName, SheetLineProcessor<T, V> lineProcessor) {
+  public SheetProcessor(String sheetName, Class<T> targetClazz, SheetLineProcessor<T, V, H> lineProcessor) {
     super();
     this.sheetName = sheetName;
+    this.targetClazz = targetClazz;
     this.lineProcessor = lineProcessor;
   }
 
@@ -67,19 +81,32 @@ public abstract class SheetProcessor<T extends LineData, V extends LineDataValid
    * @param: singleFlush  是否解析完单行记录就开始业务处理该行记录
    */
   protected SheetProcessResult processLine(Sheet sheet, int lineNum, boolean singleFlush) {
-    SheetProcessResult sheetResult = new SeetProcessResult();
+    SheetProcessResult sheetResult = new SheetProcessResult();
 
-    LineProcessResult lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush);
+    LineProcessResult lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush, newModel());
     if(lineResult != null) {
       sheetResult.add(lineResult);
     }
 
     while(lineResult != null) {
-      lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush);
+      lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush, newModel());
 
       if(lineResult != null) {
         sheetResult.add(lineResult);
       }
     }
+
+    return sheetResult;
+  }
+
+  private T newModel() {
+    try {
+      return targetClazz.newInstance();
+    } catch (InstantiationException e) {
+      logger.error("业务对象实例化异常：" + e.getMessage());
+    } catch (IllegalAccessException e) {
+      logger.error("业务对象实例化异常：" + e.getMessage());
+    }
+    return null;
   }
 }

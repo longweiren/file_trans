@@ -1,6 +1,7 @@
-package com.kopcoder.dataTranfer.excel.engine.validator;
+package com.kopcoder.dataTransfer.excel.engine.validator;
 
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
+import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
 
 public interface LineDataValidator<T extends LineData> {
   /**

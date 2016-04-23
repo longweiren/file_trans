@@ -1,32 +1,42 @@
 package com.kopcoder.dataTransfer.excel.engine;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<T>> {
+import com.kopcoder.dataTransfer.excel.engine.validator.LineDataValidator;
+import com.kopcoder.dataTransfer.excel.engine.handler.LineDataHandler;
 
-  private Logger logger = Logger.getLogger(getClass());
+import com.kopcoder.dataTransfer.excel.engine.model.LineData;
+import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
+
+public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<T>, H extends LineDataHandler<T>> {
+
+  private Logger logger = LogManager.getLogger(getClass());
 
   private V validator = null;
+  private H lineDataHandler = null;
 
-  public SheetLineProcessor(V validator, ) {
+  public SheetLineProcessor(V validator, H dataHandler) {
     super();
     this.validator = validator;
+    this.lineDataHandler = dataHandler;
   }
 
   /**
    * @description 解析sheet中指定行数据，并转换为指定class的对象,验证对象数据，并返回解析结果
    * @param sheet    解析的sheet
    * @param lineNum  sheet中的行号
+   * @param singleFlush  是否解析完单条数据即处理
    * @param targetObj    目标对象
    */
   public LineProcessResult processLineData(Sheet sheet,
-    int lineNum, T targetObj) {
+    int lineNum, boolean singleFlush, T targetObj) {
 
     T lineData = readLine(sheet, lineNum, targetObj);
 
@@ -39,9 +49,13 @@ public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<
         validator.validate(lineData);
       }
 
+      if(singleFlush && lineDataHandler != null) {
+        lineDataHandler.handle(lineData);
+      }
+
       return lineData.successResult();
     } catch (Exception e) {
-      return lineData.failedResult(e.getMessage);
+      return lineData.failedResult(e.getMessage());
     }
   }
 
@@ -52,7 +66,7 @@ public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<
    * @param targetObj    目标对象
    */
   private T readLine(Sheet sheet, int lineNum, T targetObj) {
-    if(sheet == null || clazz == null) {
+    if(sheet == null || targetObj == null) {
       return null;
     }
 
@@ -105,9 +119,9 @@ public class SheetLineProcessor<T extends LineData, V extends LineDataValidator<
         return valueCell.getStringCellValue();
       case HSSFCell.CELL_TYPE_BOOLEAN:
         return String.valueOf(valueCell.getBooleanCellValue());
-      case HSSFCell.CELL_TYPE_NUMBERIC:
+      case HSSFCell.CELL_TYPE_NUMERIC:
         HSSFDataFormatter dataFormater = new HSSFDataFormatter();
-        return dataFormater.format(valueCell);
+        return dataFormater.formatCellValue(valueCell);
     }
 
     return null;

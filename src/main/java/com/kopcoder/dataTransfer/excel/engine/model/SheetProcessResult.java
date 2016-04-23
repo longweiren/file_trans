@@ -25,7 +25,7 @@ public class SheetProcessResult {
    * @Description: 加入解析成功结果
    * @param: success  解析成功结果
    */
-  public void addSuccess(LineProcessResult success) {
+  public void addSuccess(LineProcessSuccessResult success) {
     successResults.add(success);
   }
 
@@ -33,21 +33,17 @@ public class SheetProcessResult {
    * @Description: 加入解析失败结果
    * @param: fail  解析失败结果
    */
-  public void addFailed(LineProcessResult fail) {
+  public void addFailed(LineProcessFailResult fail) {
     failResults.add(fail);
   }
 
-  /**
-   * @Description: 合并解析结果集到当前结果集
-   * @param: sheetResults 待加入的解析结果集
-   */
-  public void addAll(LineProcessResult sheetResults) {
-    if(sheetResults != null && sheetResults.successResults != null) {
-      successResults.addAll(sheetResults.successResults);
-    }
-
-    if(sheetResults != null && sheetResults.failResults != null) {
-      failResults.addAll(sheetResults.failResults);
+  public void add(LineProcessResult result) {
+    //addSuccess
+    if(result.isSuccess()) {
+      addSuccess((LineProcessSuccessResult) result);
+    } else {
+      addFailed((LineProcessFailResult) result);
     }
   }
+
 }
