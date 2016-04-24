@@ -19,8 +19,8 @@ public class SheetLineProcessor<T extends LineData> {
 
   private Logger logger = LogManager.getLogger(getClass());
 
-  private LineDataValidator<T>  validator = null;
-  private LineDataHandler<T> lineDataHandler = null;
+  private LineDataValidator<T> validator;
+  private LineDataHandler<T> lineDataHandler;
 
   public SheetLineProcessor(LineDataValidator<T> validator, LineDataHandler<T> dataHandler) {
     super();

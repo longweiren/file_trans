@@ -10,6 +10,8 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+//apply plugin: 'checkstyle'
+//apply plugin: 'findbugs'
 
 sourceCompatibility = 1.6
 
@@ -22,6 +24,11 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     //mavenCentral()
+}
+
+// enable log4j2. copy log4j2.xml to classpath
+processResources{
+    from 'src/main/resources'
 }
 
 sourceSets {
@@ -53,4 +60,6 @@ dependencies {
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
 }
+
+
 

@@ -12,8 +12,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import com.kopcoder.dataTransfer.excel.engine.validator.LineDataValidator;
-import com.kopcoder.dataTransfer.excel.engine.handler.LineDataHandler;
 import com.kopcoder.dataTransfer.excel.engine.model.SheetProcessResult;
 import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
@@ -46,13 +44,12 @@ public class SheetProcessor<T extends LineData> {
       workbook = WorkbookFactory.create(inStream);
       sheet = workbook.getSheet(sheetName);
     } catch (IOException e) {
-
+      logger.warn(e.getMessage());
     } catch (EncryptedDocumentException e) {
-
+      logger.warn(e.getMessage());
     } catch (InvalidFormatException e) {
-
-    } finally {
-
+      logger.warn(e.getMessage());
+      logger.warn(e.getMessage());
     }
 
     return sheet;
@@ -66,7 +63,6 @@ public class SheetProcessor<T extends LineData> {
    * @return SheetProcessResult
    */
   public SheetProcessResult process(InputStream inStream, int startLineNum, boolean singleFlush) {
-    System.out.println("prepare process sheet " + sheetName);
     Sheet sheet = getSheet(inStream);
     if(sheet == null) {
       return null;
@@ -84,14 +80,16 @@ public class SheetProcessor<T extends LineData> {
    */
   protected SheetProcessResult processLine(Sheet sheet, int lineNum, boolean singleFlush) {
     SheetProcessResult sheetResult = new SheetProcessResult();
+    int processLineNum = lineNum;
 
-    LineProcessResult lineResult = lineProcessor.processLineData(sheet, lineNum, singleFlush, newModel());
+    LineProcessResult lineResult = lineProcessor.processLineData(sheet, processLineNum, singleFlush, newModel());
     if(lineResult != null) {
       sheetResult.add(lineResult);
     }
 
     while(lineResult != null) {
-      lineResult = lineProcessor.processLineData(sheet, ++lineNum, singleFlush, newModel());
+      processLineNum += 1;
+      lineResult = lineProcessor.processLineData(sheet, processLineNum, singleFlush, newModel());
 
       if(lineResult != null) {
         sheetResult.add(lineResult);

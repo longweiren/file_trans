@@ -3,14 +3,11 @@ package com.kopcoder.dataTransfer.excel.engine.model;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
 
 import com.kopcoder.dataTransfer.excel.engine.annotation.CellField;
 import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
@@ -114,9 +111,9 @@ public abstract class LineData {
       } catch (SecurityException e) {
         logger.error("setter invoke error:" + e.getMessage());
       } catch ( IllegalArgumentException e) {
-        logger.error("setter invoke error:" + e.getMessage());
+        logger.error("setter invoke argument error:" + e.getMessage());
       } catch (IllegalAccessException e) {
-        logger.error("setter invoke error:" + e.getMessage());
+        logger.error("setter invoke access error:" + e.getMessage());
       } catch (InvocationTargetException e) {
         logger.error("setter invoke error:" + e.getMessage());
       }
