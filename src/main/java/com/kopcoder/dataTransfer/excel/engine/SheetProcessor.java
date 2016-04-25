@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import com.kopcoder.dataTransfer.excel.engine.model.SheetProcessResult;
 import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
+import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
+
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 
 public class SheetProcessor<T extends LineData> {
@@ -80,19 +82,25 @@ public class SheetProcessor<T extends LineData> {
    */
   protected SheetProcessResult processLine(Sheet sheet, int lineNum, boolean singleFlush) {
     SheetProcessResult sheetResult = new SheetProcessResult();
-    int processLineNum = lineNum;
+    int processLineNum = lineNum;  //当前解析行号
 
-    LineProcessResult lineResult = lineProcessor.processLineData(sheet, processLineNum, singleFlush, newModel());
-    if(lineResult != null) {
-      sheetResult.add(lineResult);
-    }
+    LineProcessResult lineResult = null;
 
-    while(lineResult != null) {
-      processLineNum += 1;
-      lineResult = lineProcessor.processLineData(sheet, processLineNum, singleFlush, newModel());
+    while(true) {
+      try {
 
-      if(lineResult != null) {
-        sheetResult.add(lineResult);
+        lineResult = lineProcessor.processLineData(sheet, processLineNum, singleFlush, newModel());
+
+        if(lineResult != null) {
+          sheetResult.add(lineResult);
+        } else {
+          break;
+        }
+
+      } catch (LineDataException e) {
+        logger.error(e.getMessage());
+      } finally {
+        processLineNum += 1;
       }
     }
 

@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import com.kopcoder.dataTransfer.excel.engine.validator.LineDataValidator;
 import com.kopcoder.dataTransfer.excel.engine.handler.LineDataHandler;
 
+import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
+
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 import com.kopcoder.dataTransfer.excel.engine.model.LineProcessResult;
 
@@ -34,9 +36,10 @@ public class SheetLineProcessor<T extends LineData> {
    * @param lineNum  sheet中的行号
    * @param singleFlush  是否解析完单条数据即处理
    * @param targetObj    目标对象
+   * @throws LineDataException 行数据转换成对象发生错误时抛出该异常
    */
   public LineProcessResult processLineData(Sheet sheet,
-    int lineNum, boolean singleFlush, T targetObj) {
+    int lineNum, boolean singleFlush, T targetObj) throws LineDataException {
 
     T lineData = readLine(sheet, lineNum, targetObj);
 
@@ -64,8 +67,9 @@ public class SheetLineProcessor<T extends LineData> {
    * @param sheet    解析的sheet
    * @param lineNum  sheet中的行号
    * @param targetObj    目标对象
+   * @throws LineDataException 行数据转换成对象发生错误时抛出该异常
    */
-  private T readLine(Sheet sheet, int lineNum, T targetObj) {
+  private T readLine(Sheet sheet, int lineNum, T targetObj) throws LineDataException {
     if(sheet == null || targetObj == null) {
       return null;
     }
