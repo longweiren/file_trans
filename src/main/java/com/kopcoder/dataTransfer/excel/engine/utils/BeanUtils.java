@@ -11,17 +11,28 @@ import java.lang.reflect.Method;
 import com.kopcoder.dataTransfer.excel.engine.annotation.CellField;
 import com.kopcoder.dataTransfer.excel.engine.typeHandler.TypeHandler;
 import com.kopcoder.dataTransfer.excel.engine.typeHandler.NonTypeHandler;
+import com.kopcoder.dataTransfer.excel.engine.typeHandler.TypeHandlerFactory;
 
+/**
+ * @description Bean工具类
+ * @author kopcoder
+ */
 public class BeanUtils {
   private static Logger logger = LogManager.getLogger(BeanUtils.class);
 
+  /**
+   * @description 从属性的定义中提取属性对应的类型转换器
+   * @param field 需要处理的属性
+   */
   public static TypeHandler getTypeHandler(Field field) {
 
       CellField cellDef = field.getAnnotation(CellField.class);
-       if( cellDef != null
+      if( cellDef != null
           && cellDef.typeHandler() != null) {
         if(cellDef.typeHandler() == NonTypeHandler.class) {
-          return null;
+          TypeHandler typeHandler = TypeHandlerFactory.get(field.getType());
+
+          return typeHandler;
         }
 
         Class clazz = cellDef.typeHandler();
@@ -38,7 +49,9 @@ public class BeanUtils {
   }
 
   /**
-   * 根据单元格名称查找领域对象对应的field
+   * @description 根据单元格定义的单元名称查找领域对象对应的field
+   * @param clazz 领域对象类型
+   * @param cellName 定义单元格内容
    */
   public static Field getMappedField(Class clazz, String cellName) {
 
@@ -58,6 +71,7 @@ public class BeanUtils {
 
     return null;
   }
+
   /**
    * @description 为对象指定属性赋值
    * @param targetObject 待赋值的目标对象
@@ -96,6 +110,9 @@ public class BeanUtils {
     }
   }
 
+  /**
+   * @description 获取field对象的setter方法
+   */
   private static Method getSetter(Field field) {
     String fieldName = field.getName();
     String setterName = "set" + Character.toUpperCase(fieldName.charAt(0))

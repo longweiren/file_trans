@@ -19,12 +19,20 @@ import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
 
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 
+/**
+ * Excel Sheet处理器.
+ * @param <T>  Excel行数据对应的Java对象
+ * @author kopcoder
+ */
 public class SheetProcessor<T extends LineData> {
 
   private Logger logger = LogManager.getLogger(getClass());
 
+  /* Sheet 名字 */
   private String sheetName;
+  /* 行数据对应Java对象的类型Class */
   private Class<T>  targetClazz;
+  /* Sheet 行处理器 */
   private SheetLineProcessor<T> lineProcessor;
 
   public SheetProcessor(String sheetName, Class<T> targetClazz, SheetLineProcessor<T> lineProcessor) {
@@ -77,7 +85,7 @@ public class SheetProcessor<T extends LineData> {
   /**
    * @Description:
    * @param: sheet        解析数据的Sheet
-   * @param: lineNum      解析数据的行号
+   * @param: lineNum      开始解析数据的行号
    * @param: singleFlush  是否解析完单行记录就开始业务处理该行记录
    */
   protected SheetProcessResult processLine(Sheet sheet, int lineNum, boolean singleFlush) {
@@ -107,6 +115,9 @@ public class SheetProcessor<T extends LineData> {
     return sheetResult;
   }
 
+  /**
+   * 实例化新的行数据业务对象
+   */
   private T newModel() {
     try {
       return targetClazz.newInstance();

@@ -4,7 +4,6 @@ import com.kopcoder.dataTransfer.excel.engine.utils.BeanUtils;
 import com.kopcoder.dataTransfer.excel.engine.exception.DataTransException;
 import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
 
-
 import java.lang.reflect.Field;
 
 import org.apache.logging.log4j.Logger;
@@ -39,6 +38,8 @@ public abstract class LineData {
 
   /**
    * @Description 把单元格数据设置到领域对象对应的字段上
+   * @param cellName 定义单元格内容
+   * @param value    对应数据单元格内容
    */
   public final void setCellValue(String cellName, String value) throws LineDataException {
     if(cellName == null || value == null) {
@@ -63,10 +64,17 @@ public abstract class LineData {
   }
 
 
+
+  /**
+   * 返回解析成功结果
+   */
   public LineProcessResult successResult() {
     return new LineProcessSuccessResult(this);
   }
 
+  /**
+   * 返回解析失败结果
+   */
   public LineProcessResult failedResult(String msg) {
     return new LineProcessFailResult(this, msg);
   }

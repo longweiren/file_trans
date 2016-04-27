@@ -1,5 +1,7 @@
 package com.kopcoder.dataTransfer.excel.engine.exception;
-
+/**
+ * 解析Excel错误时抛出该异常
+ */
 public class DataTransException extends Exception {
 
   public DataTransException() {

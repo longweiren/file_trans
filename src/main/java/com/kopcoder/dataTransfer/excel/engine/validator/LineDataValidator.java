@@ -3,6 +3,10 @@ package com.kopcoder.dataTransfer.excel.engine.validator;
 import com.kopcoder.dataTransfer.excel.engine.model.LineData;
 import com.kopcoder.dataTransfer.excel.engine.exception.LineDataException;
 
+/**
+ * @description Excel行数据验证器
+ * @author kopcoder
+ */
 public interface LineDataValidator<T extends LineData> {
   /**
    * @description   验证航数据是否符合要求

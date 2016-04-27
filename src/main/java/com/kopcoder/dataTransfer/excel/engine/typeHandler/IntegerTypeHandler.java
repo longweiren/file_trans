@@ -2,6 +2,10 @@ package com.kopcoder.dataTransfer.excel.engine.typeHandler;
 
 import com.kopcoder.dataTransfer.excel.engine.exception.DataTransException;
 
+/**
+ * @description 转换String为Integer类型
+ * @author kopcoder
+ */
 public class IntegerTypeHandler implements TypeHandler {
 
   public Integer getValue(String value) throws DataTransException {
